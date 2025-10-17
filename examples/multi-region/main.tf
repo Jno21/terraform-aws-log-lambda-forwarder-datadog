@@ -17,11 +17,10 @@ provider "aws" {
 module "datadog_forwarder_us_east_1" {
   source = "../../"
 
-  # Required - API key will be stored in Secrets Manager
-  # Alternatively, use dd_api_key_secret_arn to reference an existing Secrets Manager secret
+  # Required - Use dd_api_key_secret_arn to reference an existing Secrets Manager secret
   # Or use dd_api_key_ssm_parameter_name to reference an existing SSM Parameter
-  dd_api_key = var.datadog_api_key
-  dd_site    = var.datadog_site
+  dd_api_key_secret_arn = var.dd_api_key_secret_arn
+  dd_site               = var.datadog_site
 
   # Basic Lambda configuration
   function_name = var.function_name
@@ -40,11 +39,10 @@ module "datadog_forwarder_us_east_2" {
   # Specify the region
   region = "us-east-2"
 
-  # Required - API key will be stored in Secrets Manager
-  # Alternatively, use dd_api_key_secret_arn to reference an existing Secrets Manager secret
+  # Required - Use dd_api_key_secret_arn to reference an existing Secrets Manager secret
   # Or use dd_api_key_ssm_parameter_name to reference an existing SSM Parameter
-  dd_api_key = var.datadog_api_key
-  dd_site    = var.datadog_site
+  dd_api_key_secret_arn = var.dd_api_key_secret_arn
+  dd_site               = var.datadog_site
 
   # Basic Lambda configuration
   function_name = var.function_name

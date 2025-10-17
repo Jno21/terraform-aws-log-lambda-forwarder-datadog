@@ -80,8 +80,8 @@ module "datadog_forwarder" {
   source = "../../"
 
   # API key configuration
-  dd_api_key = var.datadog_api_key
-  dd_site    = var.datadog_site
+  dd_api_key_secret_arn = var.dd_api_key_secret_arn
+  dd_site               = var.datadog_site
 
   # Lambda configuration
   function_name = var.function_name

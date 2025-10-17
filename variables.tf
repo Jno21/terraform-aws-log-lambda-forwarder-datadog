@@ -1,11 +1,4 @@
 # Required variables
-variable "dd_api_key" {
-  type        = string
-  default     = null
-  description = "The Datadog API key, which can be found from the APIs page (/account/settings#api). It will be stored in AWS Secrets Manager securely. If dd_api_key_secret_arn is also set, this value is ignored."
-  sensitive   = true
-}
-
 variable "dd_api_key_secret_arn" {
   type        = string
   default     = null

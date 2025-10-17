@@ -14,35 +14,13 @@ module "iam" {
   forwarder_bucket_arn              = local.create_s3_bucket ? aws_s3_bucket.forwarder_bucket[0].arn : null
   dd_forwarder_existing_bucket_name = var.dd_forwarder_existing_bucket_name
   dd_api_key_ssm_parameter_name     = var.dd_api_key_ssm_parameter_name
-  dd_api_key_secret_arn             = var.dd_api_key_secret_arn == null ? try(aws_secretsmanager_secret.dd_api_key_secret[0].arn, null) : "${var.dd_api_key_secret_arn}*"
+  dd_api_key_secret_arn             = try("${var.dd_api_key_secret_arn}*", null)
   dd_fetch_lambda_tags              = var.dd_fetch_lambda_tags
   dd_fetch_step_functions_tags      = var.dd_fetch_step_functions_tags
   dd_fetch_log_group_tags           = var.dd_fetch_log_group_tags
   dd_fetch_s3_tags                  = var.dd_fetch_s3_tags
   dd_use_vpc                        = var.dd_use_vpc
   additional_target_lambda_arns     = var.additional_target_lambda_arns != null ? split(",", var.additional_target_lambda_arns) : []
-}
-
-# Secrets Manager secret for Datadog API key
-resource "aws_secretsmanager_secret" "dd_api_key_secret" {
-  count = var.dd_api_key_secret_arn == null && var.dd_api_key_ssm_parameter_name == null ? 1 : 0
-
-  region = local.region
-
-  name_prefix = "DatadogAPIKey-${var.function_name}"
-
-  description = "Datadog API Key"
-
-  tags = var.tags
-}
-
-resource "aws_secretsmanager_secret_version" "dd_api_key_secret_version" {
-  count = var.dd_api_key_secret_arn == null && var.dd_api_key_ssm_parameter_name == null ? 1 : 0
-
-  region = local.region
-
-  secret_id     = aws_secretsmanager_secret.dd_api_key_secret[0].id
-  secret_string = var.dd_api_key
 }
 
 # S3 bucket for the forwarder (if needed)
@@ -189,11 +167,8 @@ resource "aws_lambda_function" "forwarder" {
         DD_TRACE_ENABLED          = tostring(var.dd_trace_enabled)
       },
       # API key configuration
-      var.dd_api_key_ssm_parameter_name != null ? {
-        DD_API_KEY_SSM_NAME = var.dd_api_key_ssm_parameter_name
-        } : {
-        DD_API_KEY_SECRET_ARN = var.dd_api_key_secret_arn == null ? aws_secretsmanager_secret.dd_api_key_secret[0].arn : var.dd_api_key_secret_arn
-      },
+      var.dd_api_key_ssm_parameter_name != null ? { DD_API_KEY_SSM_NAME = var.dd_api_key_ssm_parameter_name } : null,
+      var.dd_api_key_secret_arn != null ? { DD_API_KEY_SECRET_ARN = var.dd_api_key_secret_arn } : null,
       # S3 bucket name
       local.create_s3_bucket || var.dd_forwarder_existing_bucket_name != null ? {
         DD_S3_BUCKET_NAME = local.create_s3_bucket ? aws_s3_bucket.forwarder_bucket[0].id : var.dd_forwarder_existing_bucket_name
@@ -235,6 +210,13 @@ resource "aws_lambda_function" "forwarder" {
   }
 
   tags = var.tags
+
+  lifecycle {
+    precondition {
+      condition     = length(compact([var.dd_api_key_secret_arn, var.dd_api_key_ssm_parameter_name])) == 1
+      error_message = "Only one dd_api_key_secret_arn or dd_api_key_ssm_parameter_name must be set."
+    }
+  }
 }
 
 # Lambda permissions

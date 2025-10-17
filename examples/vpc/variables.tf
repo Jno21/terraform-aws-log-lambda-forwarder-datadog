@@ -4,8 +4,8 @@ variable "aws_region" {
   default     = "us-east-1"
 }
 
-variable "datadog_api_key" {
-  description = "Datadog API key"
+variable "dd_api_key_secret_arn" {
+  description = "The ARN of the secret storing the Datadog API key, if you already have it stored in Secrets Manager. You must store the secret as a plaintext, rather than a key-value pair."
   type        = string
   sensitive   = true
 }

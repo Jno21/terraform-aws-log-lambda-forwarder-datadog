@@ -4,7 +4,7 @@ provider "aws" {
 }
 
 variables {
-  dd_api_key                    = "test-api-key-value"
+  dd_api_key_secret_arn         = "arn:aws:secretsmanager:us-east-1:123456789012:secret:datadog-api-key-AbCdEf"
   dd_site                       = "datadoghq.com"
   dd_tags                       = "env:test,service:forwarder"
   dd_fetch_lambda_tags          = true

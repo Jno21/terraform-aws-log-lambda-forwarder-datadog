@@ -4,8 +4,8 @@ provider "aws" {
 }
 
 variables {
-  dd_api_key = "test-api-key-value"
-  dd_site    = "datadoghq.com"
+  dd_api_key_secret_arn = "arn:aws:secretsmanager:us-east-1:123456789012:secret:datadog-api-key-AbCdEf"
+  dd_site               = "datadoghq.com"
 }
 
 run "default_config_test" {
@@ -62,12 +62,6 @@ run "default_config_test" {
   assert {
     condition     = length(module.iam) == 1
     error_message = "IAM module should be used when no existing_iam_role_arn is provided"
-  }
-
-  # === Secrets Management ===
-  assert {
-    condition     = length(aws_secretsmanager_secret.dd_api_key_secret) == 1
-    error_message = "Secrets Manager secret should be created by default"
   }
 
   # === Storage Configuration ===

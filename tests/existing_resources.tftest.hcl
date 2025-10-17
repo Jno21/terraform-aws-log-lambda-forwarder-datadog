@@ -4,7 +4,6 @@ provider "aws" {
 }
 
 variables {
-  dd_api_key                        = "test-api-key-value"
   dd_site                           = "datadoghq.com"
   existing_iam_role_arn             = "arn:aws:iam::123456789012:role/existing-datadog-role"
   dd_forwarder_existing_bucket_name = "existing-datadog-bucket"
@@ -24,12 +23,6 @@ run "existing_resources_test" {
   assert {
     condition     = length(aws_s3_bucket.forwarder_bucket) == 0
     error_message = "S3 bucket should not be created when dd_forwarder_existing_bucket_name is provided"
-  }
-
-  # Test that Secrets Manager secret is not created when using existing secret
-  assert {
-    condition     = length(aws_secretsmanager_secret.dd_api_key_secret) == 0
-    error_message = "Secrets Manager secret should not be created when dd_api_key_secret_arn is provided"
   }
 
   # Test that Lambda uses the existing IAM role

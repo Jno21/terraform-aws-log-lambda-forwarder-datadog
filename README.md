@@ -41,7 +41,6 @@ For complete usage examples demonstrating different configuration scenarios, see
 | dd_site | Datadog site to send data to. Options: `datadoghq.com`, `datadoghq.eu`, `us3.datadoghq.com`, `us5.datadoghq.com`, `ap1.datadoghq.com`, `ap2.datadoghq.com`, `ddog-gov.com` | `string` | `"datadoghq.com"` |
 
 **Note**: You must provide **one** of the following for the Datadog API key:
-- `dd_api_key` - The API key directly (will be stored in Secrets Manager)
 - `dd_api_key_secret_arn` - ARN of existing Secrets Manager secret containing the API key
 - `dd_api_key_ssm_parameter_name` - Name of SSM Parameter containing the API key
 
@@ -68,7 +67,6 @@ For complete usage examples demonstrating different configuration scenarios, see
 
 | Name | Description | Type | Default |
 |------|-------------|------|---------|
-| dd_api_key | Datadog API key | `string` | `null` |
 | dd_api_key_secret_arn | ARN of secret storing API key | `string` | `null` |
 | dd_api_key_ssm_parameter_name | SSM parameter name for API key | `string` | `null` |
 | dd_site | Datadog site | `string` | `"datadoghq.com"` |
@@ -214,9 +212,9 @@ provider "aws" {
 module "datadog_forwarder_us_east_1" {
   source = "path/to/this/module"
 
-  function_name = "DatadogForwarder"
-  dd_api_key    = var.datadog_api_key
-  dd_site       = "datadoghq.com"
+  function_name         = "DatadogForwarder"
+  dd_api_key_secret_arn = var.dd_api_key_secret_arn
+  dd_site               = "datadoghq.com"
 }
 
 # us-west-2 deployment
@@ -224,9 +222,9 @@ module "datadog_forwarder_us_west_2" {
   source = "path/to/this/module"
   region = "us-west-2"
 
-  function_name = "DatadogForwarder"
-  dd_api_key    = var.datadog_api_key
-  dd_site       = "datadoghq.com"
+  function_name         = "DatadogForwarder"
+  dd_api_key_secret_arn = var.dd_api_key_secret_arn
+  dd_site               = "datadoghq.com"
 }
 ```
 

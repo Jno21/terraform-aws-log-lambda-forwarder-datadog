@@ -4,7 +4,7 @@ provider "aws" {
 }
 
 variables {
-  dd_api_key             = "test-api-key-value"
+  dd_api_key_secret_arn  = "arn:aws:secretsmanager:us-east-1:123456789012:secret:datadog-api-key-AbCdEf"
   dd_site                = "datadoghq.com"
   dd_use_vpc             = true
   vpc_security_group_ids = ["sg-12345678"]
